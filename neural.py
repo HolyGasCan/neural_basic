@@ -5,13 +5,12 @@ import copy
 WIDTH = 12
 HEIGHT = 14
 
-NUM_OF_NEURONS = 20
 NUM_OF_ALPHABET = 33 + 1   # UNICODE - лучшее изобретение человечества
 
 B = 0.50
 
 
-def gen_params():
+def gen_params(NUM_OF_NEURONS):
     W1 = np.random.normal(size=(NUM_OF_NEURONS, WIDTH * HEIGHT)) * np.sqrt(1. / (WIDTH * HEIGHT))
     b1 = np.random.normal(size=(NUM_OF_NEURONS, 1)) * np.sqrt(1. / NUM_OF_NEURONS)
     W2 = np.random.normal(size=(NUM_OF_ALPHABET, NUM_OF_NEURONS)) * np.sqrt(1. / (NUM_OF_NEURONS * 2))
@@ -20,10 +19,11 @@ def gen_params():
     # W2 = np.random.rand(NUM_OF_ALPHABET, NUM_OF_NEURONS) - B
     # b1 = np.random.rand(NUM_OF_NEURONS, 1) - B
     # b2 = np.random.rand(NUM_OF_ALPHABET, 1) - B
-    np.save('W1_init', W1)
-    np.save('b1_init', b1)
-    np.save('W2_init', W2)
-    np.save('b2_init', b2)
+    # np.save('W1_init', W1)
+    # np.save('b1_init', b1)
+    # np.save('W2_init', W2)
+    # np.save('b2_init', b2)
+    return W1, b1, W2, b2
 
 
 def softmax(z):
@@ -56,17 +56,17 @@ def get_accuracy(predictions, y):
 
 
 class Neural:
-    def __init__(self, data):
-        # gen_params()
+    def __init__(self, data, NUM_OF_NEURONS):
+        self.W1, self.b1, self.W2, self.b2 = gen_params(NUM_OF_NEURONS)
         # np.random.shuffle(data)
         # np.save('data', data)
 
         self.m, self.n = data.shape
 
-        self.W1 = np.load('W1_init.npy')
-        self.W2 = np.load('W2_init.npy')
-        self.b1 = np.load('b1_init.npy')
-        self.b2 = np.load('b2_init.npy')
+        # self.W1 = np.load('W1_init.npy')
+        # self.W2 = np.load('W2_init.npy')
+        # self.b1 = np.load('b1_init.npy')
+        # self.b2 = np.load('b2_init.npy')
 
         self.data_dev = data[0:2000].T
         self.y_dev = self.data_dev[0]

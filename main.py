@@ -1,5 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import threading
+import time
 
 from prepare_data import PreparationData
 from neural import Neural, get_accuracy
@@ -27,8 +29,8 @@ def draw(matrix, index):
     plt.show()
 
 
-def create_neural(data, it, index=201):
-    neural = Neural(data)
+def create_neural(data, neurons, it, accuracy, index=201):
+    neural = Neural(data, neurons)
     current_image = data[index + 2000]
     label = chr(int(current_image[0] + UNICODE_OFFSET))
     neural.W1, neural.b1, neural.W2, neural.b2 = neural.gradient_descent(neural.x_train, neural.y_train, 0.10, it)
@@ -41,7 +43,6 @@ def create_neural(data, it, index=201):
             # print(prediction, neural.y_dev[i])
             cnt += 1
             # print(i)
-    accuracy = (1 - cnt / 2000) * 100
     prediction = neural.make_predictions(neural.x_train[:, index, None])
     # print("Prediction: ", chr(int(prediction + UNICODE_OFFSET)))
     # print("Label: ", label)
@@ -63,7 +64,7 @@ def create_neural(data, it, index=201):
     # current_image = current_image.reshape((14, 12)) * 255
     # plt.imshow(current_image, interpolation='nearest', cmap='gray')
     # plt.show()
-    return accuracy
+    accuracy.append((1 - cnt / 2000) * 100)
 
 
 def save_neural(neural):
@@ -79,15 +80,23 @@ def load_neural(neural):
     neural.b1 = np.load('b1.npy')
     neural.b2 = np.load('b2.npy')
 
-# todo: 3d plot that represents accuracy (z axis) which depends on both number of iterations and neurons
 # UNICODE - это моя жизнь (44F=Я, 450=???, 451=Ё)
 if __name__ == '__main__':
+    start_time = time.time()
     data = preparation_data()
-    accuracy = list()
-    iterations = list()
-    for i in range(3000, 3001, 50):
-        accuracy.append(create_neural(data, i))
-        iterations.append(i)
-    print(accuracy)
-    plt.plot(iterations, accuracy)
+    threads = list()
+    neurons = [5, 10, 15, 25, 35, 50]
+    for neuron in neurons:
+        accuracy = list()
+        iterations = list()
+        for i in range(25, 401, 25):
+            x = threading.Thread(target=create_neural, args=(data, neuron, i, accuracy))
+            threads.append(x)
+            x.start()
+            iterations.append(i)
+        for j in range(len(threads)):
+            threads[j].join()
+        plt.plot(iterations, accuracy, label=f"{neuron} neurons")
+    print("Time elapsed: " + str(time.time() - start_time) + " seconds")
+    plt.legend()
     plt.show()
