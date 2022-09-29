@@ -83,13 +83,15 @@ def load_neural(neural):
 # UNICODE - это моя жизнь (44F=Я, 450=???, 451=Ё)
 if __name__ == '__main__':
     start_time = time.time()
+
     data = preparation_data()
+
     threads = list()
-    neurons = [5, 10, 15, 25, 35, 50]
+    neurons = [5, 10, 25, 35, 50]
     for neuron in neurons:
         accuracy = list()
         iterations = list()
-        for i in range(25, 401, 25):
+        for i in range(25, 301, 25):
             x = threading.Thread(target=create_neural, args=(data, neuron, i, accuracy))
             threads.append(x)
             x.start()
@@ -97,6 +99,9 @@ if __name__ == '__main__':
         for j in range(len(threads)):
             threads[j].join()
         plt.plot(iterations, accuracy, label=f"{neuron} neurons")
-    print("Time elapsed: " + str(time.time() - start_time) + " seconds")
+    elapsed_time = round(time.time() - start_time, 2)
+    print("Time elapsed: " + str(int(elapsed_time // 60)) + " minutes and "
+          + str(int(elapsed_time - 60 * (elapsed_time // 60))) + " seconds")
+
     plt.legend()
     plt.show()
