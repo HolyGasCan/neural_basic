@@ -9,6 +9,8 @@ NUM_OF_ALPHABET = 33 + 1   # UNICODE - лучшее изобретение че�
 
 B = 0.50
 
+np.random.seed(1337228)
+
 
 def gen_params(NUM_OF_NEURONS):
     W1 = np.random.normal(size=(NUM_OF_NEURONS, WIDTH * HEIGHT)) * np.sqrt(1. / (WIDTH * HEIGHT))

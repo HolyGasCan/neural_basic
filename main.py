@@ -91,7 +91,7 @@ if __name__ == '__main__':
     for neuron in neurons:
         accuracy = list()
         iterations = list()
-        for i in range(25, 301, 25):
+        for i in range(25, 401, 25):
             x = threading.Thread(target=create_neural, args=(data, neuron, i, accuracy))
             threads.append(x)
             x.start()
